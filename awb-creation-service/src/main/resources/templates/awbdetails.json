@@ -1,0 +1,39 @@
+{
+    "awbPrefix": "125",
+    "awbNumber": "70014700",
+    "awbNature": "Import",
+    "origin": "BOM",
+    "destination": "DXB",
+    "pieces": " 10",
+    "weight": "100",
+    "awbStatus": "L",
+    "flights": [
+        {
+            "airlineCode": "BA",
+            "flightNumber": "1022",
+            "flightdate": "25-JAN-2022"
+        },
+        {
+            "airlineCode": "BA",
+            "flightNumber": "1022",
+            "flightdate": "25-JAN-2022"
+        }
+    ],
+    "agent": [
+        {
+            "name": "DART",
+            "address": "DUBAI",
+            "type": "consignee"
+        },
+        {
+            "name": "DART",
+            "address": "ABUDHABI",
+            "type": "shipper"
+        }
+    ],
+    "createDate": "25-JAN-2022",
+    "scc": [
+        "PER",
+        "VAL"
+    ]
+}

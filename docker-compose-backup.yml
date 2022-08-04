@@ -1,0 +1,98 @@
+version: '3.9'
+
+services:
+
+  awb-naming-server:
+    image:  prabhanjanbabub/mmv2-awb-naming-server:0.0.1-SNAPSHOT
+    mem_limit: 768m
+    ports:
+      - "8761:8761"
+    networks:
+      - awb-services-network
+      
+  awb-auth-gateway:
+    image:  prabhanjanbabub/mmv2-awb-auth-gateway:0.0.1-SNAPSHOT
+    ports:
+      - "8765:8765"
+    networks:
+      - awb-services-network
+    depends_on:
+      - awb-naming-server
+      - rabbitmq
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/ 
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit      
+      
+  awb-tariff-service:
+    image: prabhanjanbabub/mmv2-awb-tariff-services:0.0.1-SNAPSHOT
+    mem_limit: 768m
+    ports:
+      - "8200:8200"
+    networks:
+      - awb-services-network
+    depends_on:
+      - awb-naming-server
+      - rabbitmq
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      
+  awb-enquiry-service:
+    image: prabhanjanbabub/mmv2-awb-enquiry-services:0.0.1-SNAPSHOT
+    mem_limit: 768m
+    ports:
+      - "8100:8100"
+    networks:
+      - awb-services-network
+    depends_on:
+      - awb-naming-server
+      - rabbitmq
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      
+  awb-creation-service:
+    image: prabhanjanbabub2/mmv2-awb-creation-service:0.0.1-SNAPSHOT
+    mem_limit: 768m
+    ports:
+      - "8000:8000"
+    networks:
+      - awb-services-network
+    depends_on:
+      - awb-naming-server
+      - rabbitmq
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+  
+  zipkin-server:
+    image: openzipkin/zipkin:latest
+    mem_limit: 512m
+    ports:
+      - "9411:9411"
+    networks:
+      - awb-services-network
+    depends_on:
+      - rabbitmq  
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+
+  rabbitmq:
+    image: rabbitmq:3.9.21-management
+    mem_limit: 512m
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - awb-services-network    
+      
+networks:
+  awb-services-network:
